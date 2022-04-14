@@ -1,0 +1,26 @@
+{
+  "name": "gus-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AumBhatt/gus-server.git"
+  },
+  "keywords": [],
+  "author": "Aum Bhatt (https://github.com/AumBhatt)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AumBhatt/gus-server/issues"
+  },
+  "homepage": "https://github.com/AumBhatt/gus-server#readme",
+  "dependencies": {
+    "axios": "^0.26.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3"
+  }
+}
