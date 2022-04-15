@@ -2,12 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import 'dotenv/config'
 
-import getGitHubData from './redisClient.js';
+import {getGitHubData, clearRedisCache} from './redisClient.js';
 
 const app = express();
 
 const PORT = 3030;
-
 
 
 // Solving the CORS issue for local development.
@@ -45,7 +44,13 @@ const setRedisData = () => {
 }
 
 // Accept a POST request from client with the '/api/clear-cache' endpoint.
-// app.post('/api/clear-cache');
+app.post('/api/clear-cache', (request, response) => {
+    clearRedisCache()
+    .then(() => {
+        response.send("Redis Cache for GUS is Flushed.");
+        response.end();
+    });
+});
 
 app.listen(PORT, () => {
     console.log(`Listening @ http://localhost:${PORT}`);

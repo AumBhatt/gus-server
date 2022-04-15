@@ -4,6 +4,7 @@ import 'dotenv/config'
 
 async function getGitHubData(searchKey) {
 
+    // Connecting to Redis Cloud using ioredis node.js client.
     const client = ioredis.createClient({
         host: process.env.REDIS_HOST,
         port: process.env.REDIS_PORT,
@@ -18,19 +19,25 @@ async function getGitHubData(searchKey) {
         console.log("Connected to Redis Cloud.")
     });
 
-
+    // Check if the search result exists in redis cache.
     const keyExists = await client.exists(searchKey);
     if(keyExists === 1) {
+        // If search results exist in redis then directly send them to client.
         console.log(searchKey, 'key exists.');
         return await client.get(searchKey);
     }
     else {
-        console.log(searchKey, 'does not exist.\nRequesting GitHub for Data....');
+        /*
+            If search results don't exist in redis then
+            make a call to GitHub api for retrieving the data.
+        */
+        console.log(searchKey, 'does not exist.\nRequesting GitHub for User Data....');
         const processedData = await axios.get('https://api.github.com/search/users', {
             params: {
                 q: searchKey
             }
         }).then((res) => {
+            // If data received, then process it followed by returning it for caching and sending.
             if(res.status === 200)
                 return processSearchData(res.data);
         }).catch(err => {
@@ -38,10 +45,34 @@ async function getGitHubData(searchKey) {
             return -1;
         });
 
-        await client.set(searchKey, JSON.stringify(processedData));
+
+        // Updating the cache by adding the processed search results for 7200s (= 2 hours).
+        await client.setex(searchKey, 7200, JSON.stringify(processedData));
         console.log('Caching Data...');
         return processedData;
     }
+}
+
+async function clearRedisCache() {
+    const client = ioredis.createClient({
+        host: process.env.REDIS_HOST,
+        port: process.env.REDIS_PORT,
+        password: process.env.REDIS_PASSWORD,
+    });
+
+    client.on('error', (err) => {
+        console.error("Redis Client error:", err);
+    });
+    
+    await client.on('connect',  () => {
+        console.log("Connected to Redis Cloud.")
+    });
+
+    client.flushall((err, success) => {
+        console.log("Redis flush success state:", success);
+        return success;
+    });
+    
 }
 
 const processSearchData = (data) => {
@@ -59,4 +90,4 @@ const processSearchData = (data) => {
     return tempList;
 }
 
-export default getGitHubData;
+export {getGitHubData, clearRedisCache};
