@@ -7,7 +7,7 @@ import {getGitHubData, clearRedisCache} from './redisClient.js';
 
 const app = express();
 
-const PORT = 3030;
+const PORT = process.env.PORT || 3030;
 
 
 // Solving the CORS issue for local development.
