@@ -72,10 +72,27 @@ const setRedisData = () => {
 }
 
 // Accept a POST request from client with the '/api/clear-cache' endpoint.
+// The response is in plain/text as much information is
 app.post('/api/clear-cache', (request, response) => {
+    response.set('Content-Type', 'application/json');
     clearRedisCache()
     .then(() => {
-        response.send("Redis Cache for GUS is Flushed.");
+        response.send(
+            JSON.stringify({
+                flushStatus: 'success',
+                error: null
+            })
+        );
+        response.end();
+    })
+    .catch(err => {
+        console.error(err);
+        response.send(
+            JSON.stringify({
+                flushStatus: 'failed',
+                error: err
+            })
+        );
         response.end();
     });
 });
