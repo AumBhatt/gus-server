@@ -1,9 +1,14 @@
-const app = require('express')();
-const axios = require('axios');
-const cors = require('cors');
+import express from 'express';
+import cors from 'cors';
+import 'dotenv/config'
 
-require('dotenv').config();
-const PORT = process.env.PORT | 3030;
+import getGitHubData from './redisClient.js';
+
+const app = express();
+
+const PORT = 3030;
+
+
 
 // Solving the CORS issue for local development.
 app.use(cors());
@@ -12,23 +17,32 @@ app.use(cors());
 app.post('/api/search/:username', (request, response) => {
     console.log(request.params);
 
-    /*
-        Making a GET request using axios to GitHub api for fetching user data with
-        'username' as the search parameter from the parameters received from POST request.
-    */
-    axios.get('https://api.github.com/search/users', {
-        params: {
-            q: request.params.username
-        }
-    }).then((res) => {
-        console.log(res.data);
-
+    getGitHubData(request.params.username)
+    .then((resData) => { 
+        console.log("resData:", resData)
         response.set('Content-Type', 'application/json');
-        // Sending only the user data from GitHub as the response [removing unecessary information].
-        response.send(JSON.stringify(res.data));
-        response.end();
-    }).catch(err => console.error(err));
+        if(resData !== -1) {
+            response.send(resData);
+            response.end();
+        }
+        else {
+            response.send(
+                JSON.stringify(
+                    {
+                        errorCode: -1,
+                        error: "Could not retrieve data from GitHub."
+                    }
+                )
+            );
+            response.end();
+        }
+    });
 });
+
+const setRedisData = () => {
+    client.set(searchKey, processSearchData(res.data))
+    
+}
 
 // Accept a POST request from client with the '/api/clear-cache' endpoint.
 // app.post('/api/clear-cache');
