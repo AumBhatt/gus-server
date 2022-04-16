@@ -23,11 +23,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.post('/api/search', (request, response) => {
 
     const requestBody = request.body;
-    if(!requestBody) {
+    if(!requestBody.length) {
+        response.statusCode = 421;
         response.set('Content-Type', 'application/json');
         response.send(
             JSON.stringify({
-                error: -2,
+                errorCode: -2,
                 error: "request body missing"
             })
         );
@@ -37,12 +38,14 @@ app.post('/api/search', (request, response) => {
         getGitHubData(requestBody.searchText)
         .then((resData) => { 
             // console.log("resData:", resData)
+            response.statusCode = 200;
             response.set('Content-Type', 'application/json');
             if(resData !== -1) {
                 response.send(resData);
                 response.end();
             }
             else {
+            response.statusCode = 422;
                 response.send(
                     JSON.stringify(
                         {
@@ -55,6 +58,7 @@ app.post('/api/search', (request, response) => {
             }
         });
     else {
+        response.statusCode = 423;
         response.set('Content-Type', 'application/json');
         response.send(
             JSON.stringify({
@@ -77,6 +81,7 @@ app.post('/api/clear-cache', (request, response) => {
     response.set('Content-Type', 'application/json');
     clearRedisCache()
     .then(() => {
+        response.statusCode = 207;
         response.send(
             JSON.stringify({
                 flushStatus: 'success',
@@ -87,6 +92,7 @@ app.post('/api/clear-cache', (request, response) => {
     })
     .catch(err => {
         console.error(err);
+        response.statusCode = 424;
         response.send(
             JSON.stringify({
                 flushStatus: 'failed',
