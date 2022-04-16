@@ -4,7 +4,7 @@ A fullstack project for searching users on github. Used Node.js & Expressjs for 
 The backend is hosted on Heroku Cloud Platform.
 
 ## Try it live:
-GUS App: https://gus-react-app.herokuapp.com
+GUS App: https://gus-react-app.herokuapp.com <br>
 GUS Server: https://gus-server.herokuapp.com
 
 ## Project Repositories:
