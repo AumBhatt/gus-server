@@ -22,17 +22,22 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Accept a POST request from client with the '/api/search' endpoint.
 app.post('/api/search', (request, response) => {
 
+    console.log("Client Connected: /api/search");
     const requestBody = request.body;
-    if(!requestBody.length) {
+    let errorMessage;
+
+    if(requestBody.constructor === Object && Object.keys(requestBody).length === 0) {
+        errorMessage = "request body missing";
         response.statusCode = 421;
         response.set('Content-Type', 'application/json');
         response.send(
             JSON.stringify({
                 errorCode: -2,
-                error: "request body missing"
+                error: errorMessage
             })
         );
         response.end();
+        console.log("Request error:", errorMessage);
     }
     else if(requestBody.searchType === 'users' && requestBody.searchText)
         getGitHubData(requestBody.searchText)
@@ -45,9 +50,10 @@ app.post('/api/search', (request, response) => {
                 response.end();
             }
             else {
-            response.statusCode = 422;
-                response.send(
-                    JSON.stringify(
+                errorMessage = "Could not retrieve data from GitHub.";
+                response.statusCode = 422;
+                    response.send(
+                        JSON.stringify(
                         {
                             errorCode: -1,
                             error: "Could not retrieve data from GitHub."
@@ -55,29 +61,30 @@ app.post('/api/search', (request, response) => {
                     )
                 );
                 response.end();
+                console.log("Request error:", errorMessage);
             }
         });
     else {
+        errorMessage = "searchType or searchText keys missing in body of request.";
         response.statusCode = 423;
         response.set('Content-Type', 'application/json');
         response.send(
             JSON.stringify({
-                error: -3,
+                errorCode: -3,
                 error: "searchType or searchText keys missing in body of request."
             })
         );
         response.end();
+        console.log("Request error:", errorMessage);
     }
 });
-
-const setRedisData = () => {
-    client.set(searchKey, processSearchData(res.data))
-    
-}
 
 // Accept a POST request from client with the '/api/clear-cache' endpoint.
 // The response is in plain/text as much information is
 app.post('/api/clear-cache', (request, response) => {
+    
+    console.log("Client Connected: /api/clear-cache");
+
     response.set('Content-Type', 'application/json');
     clearRedisCache()
     .then(() => {
@@ -91,7 +98,7 @@ app.post('/api/clear-cache', (request, response) => {
         response.end();
     })
     .catch(err => {
-        console.error(err);
+        console.error("Redis Flush Error", err);
         response.statusCode = 424;
         response.send(
             JSON.stringify({

@@ -69,7 +69,7 @@ async function clearRedisCache() {
     });
 
     client.flushall((err, success) => {
-        console.log("Redis flush success state:", success);
+        console.log("Redis flush status:", (success === 'OK') ? "success." : "failed.");
         return success;
     });
     
