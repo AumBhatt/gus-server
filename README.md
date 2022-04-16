@@ -7,6 +7,9 @@ The backend is hosted on Heroku Cloud Platform.
 GUS App: https://gus-react-app.herokuapp.com <br>
 GUS Server: https://gus-server.herokuapp.com
 
+## Swagger API Documentation
+https://app.swaggerhub.com/apis/aumbhatt.yt/gus-server/1.0.0
+
 ## Project Repositories:
 > gus-server: https://github.com/AumBhatt/gus-server <br>
 > gus-app: https://github.com/AumBhatt/gus-app
