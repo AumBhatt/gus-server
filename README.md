@@ -12,4 +12,5 @@ https://app.swaggerhub.com/apis/aumbhatt.yt/gus-server/1.0.0
 
 ## Project Repositories:
 > gus-server: https://github.com/AumBhatt/gus-server <br>
-> gus-app: https://github.com/AumBhatt/gus-app
+> gus-app: https://github.com/AumBhatt/gus-app <br>
+> GUS Home Repo: https://github.com/AumBhatt/GUS-GitHub-User-Search
