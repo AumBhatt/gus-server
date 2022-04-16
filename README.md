@@ -1,4 +1,4 @@
-# <img align="center" src="./GH-Server.png" />
+# <img align="center" src="./GH-Server4.png" />
 ### GUS - GitHub User Search : API Backend Server
 A fullstack project for searching users on github. Used Node.js & Expressjs for backend. Uses Redis Cloud Datastore for caching user data obtained from GitHub's Search API.
 The backend is hosted on Heroku Cloud Platform.
