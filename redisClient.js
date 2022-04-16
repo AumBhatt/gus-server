@@ -23,7 +23,7 @@ async function getGitHubData(searchKey) {
     const keyExists = await client.exists(searchKey);
     if(keyExists === 1) {
         // If search results exist in redis then directly send them to client.
-        console.log(searchKey, 'key exists.');
+        console.log("Redis:", searchKey, 'key exists.');
         return await client.get(searchKey);
     }
     else {
@@ -31,7 +31,7 @@ async function getGitHubData(searchKey) {
             If search results don't exist in redis then
             make a call to GitHub api for retrieving the data.
         */
-        console.log(searchKey, 'does not exist.\nRequesting GitHub for User Data....');
+        console.log(`Redis: '${searchKey}' key does not exist.\nAxios: Requesting GitHub API for User Data....`);
         const processedData = await axios.get('https://api.github.com/search/users', {
             params: {
                 q: searchKey
@@ -48,7 +48,7 @@ async function getGitHubData(searchKey) {
 
         // Updating the cache by adding the processed search results for 7200s (= 2 hours).
         await client.setex(searchKey, 7200, JSON.stringify(processedData));
-        console.log('Caching Data...');
+        console.log(`Redis: Caching Data for '${searchKey}' key.`);
         return processedData;
     }
 }

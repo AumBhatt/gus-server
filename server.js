@@ -48,6 +48,7 @@ app.post('/api/search', (request, response) => {
             if(resData !== -1) {
                 response.send(resData);
                 response.end();
+                console.log("Express: Response sent.");
             }
             else {
                 errorMessage = "Could not retrieve data from GitHub.";
